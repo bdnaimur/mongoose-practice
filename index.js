@@ -24,9 +24,41 @@ mongoose.connect(process.env.Mongoose_URL,
     .then(console.log('connect MongoDb'))
     .catch(err => console.log('Mongo err', err))
 
-const Blog = mongoose.model('Blog', blogSchema);
+const Blog = mongoose.model('Slag', blogSchema);
 console.log(Blog);
+// post a single documnets
+app.post('/posts', async function (req, res) {
+    const post = req.body;
+    const createdPost = await Blog.create(post);
+    return res.status(201).json(createdPost);
+  });
+// getting all Posts
+app.get('/posts', async function(req, res) {
+    const result = await Blog.find({});
+    return res.status(200).json(result);
+})
 
+// getting Post by Id
+app.get('/posts/:id', async function(req, res) {
+    const postId = req.params.id;
+    const result = await Blog.findById(postId);
+    return res.status(200).json(result);
+})
+
+// update data by Id
+app.put('/posts/:id', async function(req, res) {
+    const postId = req.params.id;
+    const updateData = req.body;
+    const result = await Blog.findByIdAndUpdate(postId, updateData, { new: true });
+    return res.status(200).json(result);
+})
+
+// delete documents
+app.delete('/posts/:id', async function(req, res) {
+    const postId = req.params.id;
+    const result = await Blog.findByIdAndDelete(postId);  
+    return res.status(200).json(result);
+})
 app.get('/', (req, res) => {
     res.send('Welcome!')
 })
